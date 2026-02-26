@@ -9,6 +9,7 @@ use App\ValueObject\CreateOrderItemValueObject;
 use App\ValueObject\CreateOrderValueObject;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class OrderService
@@ -26,6 +27,13 @@ class OrderService
             foreach ($orderCreateValueObject->getOrderItems() as $item) {
                 $this->createOrderItem($item, $order);
             }
+
+            Log::info('Zamówienie zostało utworzone', [
+                'order_id' => $order->id,
+                'status' => $order->status->value,
+                'total_price' => $order->total_price,
+                'items_count' => $order->orderItems()->count(),
+            ]);
 
             OrderCreated::dispatch($order);
 
